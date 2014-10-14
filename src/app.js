@@ -40,6 +40,8 @@ function makeMenuItem(srcNormal, srcHighlighted, callback, object, argx, argy, t
 
 var CarSprite = cc.Sprite.extend({
     expressionLabel : null,
+    animationFrames : null,
+    rightAnswer : null,
     ctor:function(src, x, y){
         this._super();
         this.initWithFile(src);
@@ -63,6 +65,16 @@ var CarSprite = cc.Sprite.extend({
     },
     setExpression:function(arithmetic, augend, addend) {
         expressionLabel.setString(augend + " " + arithmetic + " " + addend);
+    },
+    showRightAnswer:function(){
+
+    },
+    showWrongAnswer:function(){
+        animationFrames = new Array(2);
+        animationFrames[0] = cc.SpriteFrame.create(res.efc_wrong_01, cc.rect(0,0,689,274));
+        animationFrames[1] = cc.SpriteFrame.create(res.efc_wrong_02, cc.rect(0,0,688,274));
+        var animation = cc.Animation.create(animationFrames, 0.5, 100);
+        this.runAction(cc.Animate.create(animation));
     }
 });
 
@@ -130,6 +142,9 @@ var GameMainLayer = cc.Layer.extend({
         this.removeChild(carSprite);
         carSprite = null;
     },
+    showWrongAnswer : function() {
+        carSprite.showWrongAnswer();
+    },
     setAnswerLabel : function(newLabel) {
         answerLabel.setString(newLabel);
     },
@@ -189,7 +204,8 @@ var InputLayer = cc.Layer.extend({
         gameMainLayer.setAnswerLabel("0");
     },
     onEnterKeyClicked:function (sender) {
-        console.log(gameMainLayer.getAnswerLabel());
+        //console.log(gameMainLayer.getAnswerLabel());
+        gameMainLayer.showWrongAnswer();
     },
     onUserNMClicked:function (sender) {
     },

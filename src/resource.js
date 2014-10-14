@@ -101,7 +101,9 @@ var g_resources = [
     res.image_levelguage_bg,
     res.image_o,
     res.image_x,
-    res.image_conTop_bg
+    res.image_conTop_bg,
+    res.efc_wrong_01,
+    res.efc_wrong_02
 
     //plist
 
