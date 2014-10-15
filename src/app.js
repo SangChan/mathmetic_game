@@ -1,3 +1,7 @@
+var ACTION_NORMAL = 201;
+var ACTION_WRONG = 202;
+var ACTION_BLINK = 203;
+var ACTION_MOVE = 204;
 var size;
 function makeImage(src, argx, argy) {
     var imageObject = cc.Sprite.create(src);
@@ -40,8 +44,9 @@ function makeMenuItem(srcNormal, srcHighlighted, callback, object, argx, argy, t
 
 var CarSprite = cc.Sprite.extend({
     expressionLabel : null,
-    animationFrames : null,
     rightAnswer : null,
+    image_o : null,
+    image_x : null,
     ctor:function(src, x, y){
         this._super();
         this.initWithFile(src);
@@ -61,20 +66,70 @@ var CarSprite = cc.Sprite.extend({
             color : cc.color(255,255,255)
         });
         this.addChild(expressionLabel,1);
+        image_o = cc.Sprite.create(res.image_o);
+        image_o.attr({
+            x: 71 * 2,
+            y: 20 * 2,
+            anchorX : 0,
+            anchorY : 0
+        });
+        this.addChild(image_o,2);
+        image_o.setVisible(false);
+        image_x = cc.Sprite.create(res.image_x);
+        image_x.attr({
+            x: 71 * 2,
+            y: 20 * 2,
+            anchorX : 0,
+            anchorY : 0
+        });
+        this.addChild(image_x,2);
+        image_x.setVisible(false);
         this.setExpression("+",Math.floor(Math.random() * 10) + 1,Math.floor(Math.random() * 10) + 1);
+        this.startMove();
     },
     setExpression:function(arithmetic, augend, addend) {
         expressionLabel.setString(augend + " " + arithmetic + " " + addend);
+        if (arithmetic === "+") {
+            rightAnswer = parseInt(augend) + parseInt(addend);
+        };
+    },
+    startMove:function() {
+        var actionBy = cc.MoveBy.create(10, cc.p(size.width+700, 0));
+        actionBy.setTag(ACTION_MOVE);
+        this.runAction(cc.sequence(actionBy, cc.callFunc(this.onCarMoveEnded, this)));
     },
     showRightAnswer:function(){
-
+        this.stopAllActions();
+        image_o.setVisible(true);
+        var animationFrames = new Array(1);
+        animationFrames[0] = cc.SpriteFrame.create(res.image_car, cc.rect(0,0,684,244));
+        var animation = cc.Animation.create(animationFrames, 0.5, 2);
+        var animationAction = cc.Animate.create(animation);
+        animationAction.setTag(ACTION_NORMAL);
+        this.runAction(cc.sequence(animationAction,cc.callFunc(this.onRightAnser, this)));
     },
     showWrongAnswer:function(){
-        animationFrames = new Array(2);
+        this.stopAllActions();
+        image_x.setVisible(true);
+        var animationFrames = new Array(2);
         animationFrames[0] = cc.SpriteFrame.create(res.efc_wrong_01, cc.rect(0,0,689,274));
         animationFrames[1] = cc.SpriteFrame.create(res.efc_wrong_02, cc.rect(0,0,688,274));
-        var animation = cc.Animation.create(animationFrames, 0.5, 100);
-        this.runAction(cc.Animate.create(animation));
+        var animation = cc.Animation.create(animationFrames, 0.5, 2);
+        var animationAction = cc.Animate.create(animation);
+        animationAction.setTag(ACTION_WRONG);
+        this.runAction(cc.sequence(animationAction,cc.callFunc(this.onRightAnser, this)));
+    },
+    compareInput:function(input) {
+        return (parseInt(input) === rightAnswer);
+    },
+    onCarMoveEnded : function() {
+        this.getParent().onCarMoveEnded(this);
+    },
+    onRightAnser : function() {
+        this.getParent().onCarMoveEnded(this);
+    },
+    onWrongAnser : function() {
+        this.getParent().onCarMoveEnded(this);
     }
 });
 
@@ -133,23 +188,24 @@ var GameMainLayer = cc.Layer.extend({
     createCar : function() {
         carSprite = new CarSprite(res.image_car,-700,size.height - (202 * 2));
         this.addChild(carSprite, 1);
-
-        var actionBy = cc.MoveBy.create(10, cc.p(size.width+700, 0));
-
-        carSprite.runAction(cc.sequence(actionBy, cc.callFunc(this.onCarMoveEnded, this)));
     },
     removeCar : function() {
         this.removeChild(carSprite);
         carSprite = null;
-    },
-    showWrongAnswer : function() {
-        carSprite.showWrongAnswer();
     },
     setAnswerLabel : function(newLabel) {
         answerLabel.setString(newLabel);
     },
     getAnswerLabel : function() {
         return answerLabel.getString();
+    },
+    compareInputAndAnswer : function() {
+        var isCorrect = carSprite.compareInput(this.getAnswerLabel());
+        if (isCorrect) {
+            carSprite.showRightAnswer();
+        } else {
+            carSprite.showWrongAnswer();
+        };
     },
     onCarMoveEnded : function(sender) {
         console.log("car move ended!");
@@ -204,8 +260,7 @@ var InputLayer = cc.Layer.extend({
         gameMainLayer.setAnswerLabel("0");
     },
     onEnterKeyClicked:function (sender) {
-        //console.log(gameMainLayer.getAnswerLabel());
-        gameMainLayer.showWrongAnswer();
+        gameMainLayer.compareInputAndAnswer();
     },
     onUserNMClicked:function (sender) {
     },
