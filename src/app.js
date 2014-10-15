@@ -2,6 +2,12 @@ var ACTION_NORMAL = 201;
 var ACTION_WRONG = 202;
 var ACTION_BLINK = 203;
 var ACTION_MOVE = 204;
+var ACTION_SHOW_COMBO_5 = 205;
+var ACTION_SHOW_COMBO_10 = 206;
+var ACTION_SHOW_LEVELUP = 207;
+var LEVEL_GUAGE_ITEM_INDEX = 300;
+var LEVEL_GUAGE_MAX = 10;
+
 var size;
 function makeImage(src, argx, argy) {
     var imageObject = cc.Sprite.create(src);
@@ -123,15 +129,22 @@ var CarSprite = cc.Sprite.extend({
         return (parseInt(input) === rightAnswer);
     },
     onCarMoveEnded : function() {
-        this.getParent().onCarMoveEnded(this);
+        this.getParent().onCarMoveEndedWithAnswer(false);
     },
     onRightAnser : function() {
-        this.getParent().onCarMoveEnded(this);
+        this.getParent().onCarMoveEndedWithAnswer(true);
     },
     onWrongAnser : function() {
-        this.getParent().onCarMoveEnded(this);
+        this.getParent().onCarMoveEndedWithAnswer(true);
     }
 });
+
+var goldCoinCount = 0;
+var silverCoinCount = 0;
+var copperCoinCount = 0;
+var userName = "김재능";
+var levelName = "LEVEL 10";
+var levelTitle = "합피감수 10인 덧,뺄셈";
 
 var GameMainLayer = cc.Layer.extend({
     carSprite : null,
@@ -141,51 +154,51 @@ var GameMainLayer = cc.Layer.extend({
     goldCoinLabel : null,
     silverCoinLabel : null,
     copperConinLabel : null,
+    userNameLabel : null,
+    levelGuageCount :null,
+    comboCount :0,
     ctor:function (){
         this._super();
-        var image_levelguage_top = makeImage(res.image_levelguage_top, 1147, 432);
-        this.addChild(image_levelguage_top, 1);
 
-        for (var i = 1; i <= 8; i++) {
-            var image_levelguage_center = makeImage(res.image_levelguage_center, 1147, 432 + (32 * i));
-            this.addChild(image_levelguage_center, 1);
-        };
+        //TODO : xhr 통해서 정보 받아올 필요 있음.
 
-        var image_levelguage_below = makeImage(res.image_levelguage_below, 1147, 432 + (32 * 9));
-        this.addChild(image_levelguage_below, 1);
+        comboCount = 0;
+        levelGuageCount = 1;
 
-        var image_combo_1 = makeImage(res.image_combo_1, 30, 429 + (26 * 9));
-        this.addChild(image_combo_1, 1);
-
-        var image_combo_5 = makeImage(res.image_combo_5, 30, 429 + (26 * 10));
-        this.addChild(image_combo_5, 1);
-
-        var image_combo_10 = makeImage(res.image_combo_10, 30, 429 + (26 * 11));
-        this.addChild(image_combo_10, 1);
-
-        levelLabel = makeLabel("LEVEL 10", 21, 170, 22, cc.color(255,255,255));
+        levelLabel = makeLabel(levelName, 21, 170, 22, cc.color(255,255,255));
         this.addChild(levelLabel, 1);
 
-        levelDescLabel = makeLabel("합피감수 10인 덧,뺄셈", 40, 157, 60, cc.color(74,39,8));
-        this.addChild(levelDescLabel, 1);
+        levelTitleLabel = makeLabel(levelTitle, 40, 157, 60, cc.color(74,39,8));
+        this.addChild(levelTitleLabel, 1);
 
-        goldCoinLabel = makeLabel("00", 39, (515 + 119), 43, cc.color(103,66,70));
+        goldCoinLabel = makeLabel(this.padding(goldCoinCount), 39, (515 + 119), 43, cc.color(103,66,70));
         this.addChild(goldCoinLabel, 1);
 
-        silverCoinLabel = makeLabel("00", 39, (515 + 276), 43, cc.color(103,66,70));
+        silverCoinLabel = makeLabel(this.padding(silverCoinCount), 39, (515 + 276), 43, cc.color(103,66,70));
         this.addChild(silverCoinLabel, 1);
 
-        copperCoinLabel = makeLabel("00", 39, (515 + 432), 43, cc.color(103,66,70));
+        copperCoinLabel = makeLabel(this.padding(copperCoinCount), 39, (515 + 432), 43, cc.color(103,66,70));
         this.addChild(copperCoinLabel, 1);
 
         answerLabel = makeLabel("0", 40, 217 + 20 , 485 , cc.color(255,255,255));
         this.addChild(answerLabel, 1);
 
-        this.createCar();
+        userNameLabel = makeLabel(userName, 25, (1074 + 56) , 53 , cc.color(49,49,49));
+        this.addChild(userNameLabel, 2);
 
+        this.createCar();
+        this.createLevelGuage();
+        this.drawLevelGuage();
         return true;
     },
+    padding : function (num) {
+        var s = num+"";
+        if (s.length < 2)
+            return "0"+s;
+        return s;
+    },
     createCar : function() {
+        this.setAnswerLabel("0");
         carSprite = new CarSprite(res.image_car,-700,size.height - (202 * 2));
         this.addChild(carSprite, 1);
     },
@@ -203,14 +216,74 @@ var GameMainLayer = cc.Layer.extend({
         var isCorrect = carSprite.compareInput(this.getAnswerLabel());
         if (isCorrect) {
             carSprite.showRightAnswer();
+            this.increaseLevelGuageCount();
+            this.increseComboCount();
         } else {
             carSprite.showWrongAnswer();
+            this.decreaseLevelGuageCount();
+            this.resetComboCount();
         };
     },
-    onCarMoveEnded : function(sender) {
-        console.log("car move ended!");
+    onCarMoveEndedWithAnswer : function(isTrue) {
         this.removeCar();
+        if (!isTrue)
+            this.decreaseLevelGuageCount();
         this.createCar();
+    },
+    increseComboCount : function() {
+        comboCount++;
+        this.drawComboGuage();
+    },
+    resetComboCount : function() {
+        comboCount = 0;
+        this.drawComboGuage();
+    },
+    increaseLevelGuageCount : function() {
+        levelGuageCount += 2;
+        if (levelGuageCount >= LEVEL_GUAGE_MAX)
+            levelGuageCount = LEVEL_GUAGE_MAX;
+        this.drawLevelGuage();
+    },
+    decreaseLevelGuageCount : function() {
+        levelGuageCount--;
+        if (levelGuageCount < 0)
+            levelGuageCount = 0;
+        this.drawLevelGuage();
+    },
+    createLevelGuage : function() {
+        for (var i = LEVEL_GUAGE_MAX - 1; i >= 0; i--) {
+            var image_res;
+            if (i === 0) {
+                image_res = res.image_levelguage_top;
+            } else if (i === LEVEL_GUAGE_MAX - 1) {
+                image_res = res.image_levelguage_below;
+            } else {
+                image_res = res.image_levelguage_center;
+            }
+            var image_levelguage = makeImage(image_res, 1147, 432 + (32 * i));
+            image_levelguage.setTag(LEVEL_GUAGE_ITEM_INDEX+i);
+            this.addChild(image_levelguage, 1);
+            image_levelguage.setVisible(false);
+        };
+    },
+    drawLevelGuage : function() {
+        if (levelGuageCount <= 0)
+            return;
+        for (var i = LEVEL_GUAGE_MAX - 1; i >= 0; i--) {
+            var image_levelguage = this.getChildByTag(LEVEL_GUAGE_ITEM_INDEX+i)
+            image_levelguage.setVisible((i >= LEVEL_GUAGE_MAX - levelGuageCount) ? true : false);
+        };
+    },
+    drawComboGuage : function() {
+        //TODO : 콤보 드로잉 코드 추가
+        /*var image_combo_1 = makeImage(res.image_combo_1, 30, 429 + (26 * 9));
+        this.addChild(image_combo_1, 1);
+
+        var image_combo_5 = makeImage(res.image_combo_5, 30, 429 + (26 * 10));
+        this.addChild(image_combo_5, 1);
+
+        var image_combo_10 = makeImage(res.image_combo_10, 30, 429 + (26 * 11));
+        this.addChild(image_combo_10, 1);*/
     }
 });
 var InputLayer = cc.Layer.extend({
@@ -219,9 +292,6 @@ var InputLayer = cc.Layer.extend({
 
         var homeItem = makeMenuItem(res.btn_home_normal,res.btn_home_highlighted,this.onHomeClicked,this,20,-17,101);
         var userMNItem = makeMenuItem(res.btn_usermn_normal,res.btn_usermn_highlighted,this.onUserNMClicked,this,1074,-37,102);
-
-        var userNameLabel = makeLabel("김재능", 25, (1074 + 56) , 53 , cc.color(49,49,49));
-        this.addChild(userNameLabel, 2);
 
         var upperMenu = cc.Menu.create(homeItem,userMNItem);
         upperMenu.x = 0;
