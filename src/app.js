@@ -163,7 +163,7 @@ var GameMainLayer = cc.Layer.extend({
         //TODO : xhr 통해서 정보 받아올 필요 있음.
 
         comboCount = 0;
-        levelGuageCount = 1;
+        levelGuageCount = 3;
 
         levelLabel = makeLabel(levelName, 21, 170, 22, cc.color(255,255,255));
         this.addChild(levelLabel, 1);
@@ -239,14 +239,14 @@ var GameMainLayer = cc.Layer.extend({
         this.drawComboGuage();
     },
     increaseLevelGuageCount : function() {
-        levelGuageCount += 2;
+        levelGuageCount++;
         if (levelGuageCount >= LEVEL_GUAGE_MAX)
             levelGuageCount = LEVEL_GUAGE_MAX;
         this.drawLevelGuage();
     },
     decreaseLevelGuageCount : function() {
-        levelGuageCount--;
-        if (levelGuageCount < 0)
+        levelGuageCount -= 2;
+        if (levelGuageCount <= 0)
             levelGuageCount = 0;
         this.drawLevelGuage();
     },
@@ -267,8 +267,6 @@ var GameMainLayer = cc.Layer.extend({
         };
     },
     drawLevelGuage : function() {
-        if (levelGuageCount <= 0)
-            return;
         for (var i = LEVEL_GUAGE_MAX - 1; i >= 0; i--) {
             var image_levelguage = this.getChildByTag(LEVEL_GUAGE_ITEM_INDEX+i)
             image_levelguage.setVisible((i >= LEVEL_GUAGE_MAX - levelGuageCount) ? true : false);
