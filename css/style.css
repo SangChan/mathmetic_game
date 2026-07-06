@@ -1,0 +1,143 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    overflow: hidden;
+}
+
+#stage-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#stage {
+    position: relative;
+    width: 1280px;
+    height: 772px;
+    overflow: hidden;
+    transform-origin: top center;
+    -webkit-user-select: none;
+    user-select: none;
+    font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+#stage img {
+    position: absolute;
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.label {
+    position: absolute;
+    white-space: nowrap;
+}
+
+/* background layers */
+.bg { left: 0; top: 0; width: 1280px; height: 800px; }
+.con-top-bg { left: 0; top: 0; width: 1280px; height: 134px; }
+.con-top-level { left: 154px; top: 19px; width: 122px; height: 27px; }
+.con-top-coinbar { left: 515px; top: 20px; width: 526px; height: 84px; }
+.combo-bg { left: 20px; top: 421px; width: 144px; height: 328px; }
+.answerboard { left: 187px; top: 421px; width: 905px; height: 350px; }
+.answerboard-textbar { left: 217px; top: 481px; width: 845px; height: 55px; }
+.levelguage-bg { left: 1136px; top: 421px; width: 114px; height: 337px; }
+
+/* HUD labels */
+#levelLabel { left: 170px; top: 22px; color: #fff; font-size: 21px; font-weight: bold; }
+#levelTitleLabel { left: 157px; top: 62px; color: rgb(74, 39, 8); font-size: 22px; font-weight: bold; }
+#answerHint { left: 222px; top: 440px; color: rgb(113, 78, 47); font-size: 15px; }
+#answerLabel { left: 237px; top: 485px; color: #fff; font-size: 26px; font-weight: bold; }
+#userNameLabel { left: 1130px; top: 53px; color: rgb(49, 49, 49); font-size: 16px; }
+.coin-label { top: 43px; color: rgb(103, 66, 70); font-size: 18px; font-weight: bold; }
+#goldCoinLabel { left: 634px; }
+#silverCoinLabel { left: 791px; }
+#copperCoinLabel { left: 947px; }
+
+/* level gauge */
+#levelGauge {
+    position: absolute;
+    left: 1147px;
+    top: 432px;
+    width: 92px;
+}
+#levelGauge .gauge-cell {
+    position: absolute;
+    left: 0;
+    width: 92px;
+    height: 32px;
+    visibility: hidden;
+}
+
+/* combo effect */
+.combo-effect {
+    left: 30px;
+    top: 500px;
+    width: 124px;
+}
+
+/* car */
+#car {
+    position: absolute;
+    left: -350px;
+    top: 202px;
+    width: 342px;
+    height: 122px;
+}
+.car-body { left: 0; top: 0; width: 342px; height: 122px; }
+#expressionLabel {
+    left: 0;
+    top: 45px;
+    width: 342px;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+    font-weight: bold;
+}
+#answerO, #answerX {
+    left: 130px;
+    top: 15px;
+    width: 60px;
+    height: auto;
+}
+
+/* top bar icon buttons */
+.icon-btn {
+    position: absolute;
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    cursor: pointer;
+}
+#btnHome { left: 20px; top: 15px; width: 106px; height: 89px; }
+#btnUserMenu { left: 1074px; top: 15px; width: 176px; height: 59px; }
+
+/* numeric keypad */
+#numPad {
+    position: absolute;
+    left: 217px;
+    top: 560px;
+    width: 429px;
+    height: 145px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+}
+#numPad button {
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    cursor: pointer;
+}

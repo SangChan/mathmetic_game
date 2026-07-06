@@ -1,27 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title></title>
-    <link rel="icon" type="image/GIF" href="res/favicon.ico"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="full-screen" content="yes"/>
-    <meta name="screen-orientation" content="portrait"/>
-    <meta name="x5-fullscreen" content="true"/>
-    <meta name="360-fullscreen" content="true"/>
-    <style>
-        body, canvas, div {
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -khtml-user-select: none;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
-    </style>
+    <title>덧셈 자동차 게임</title>
+    <link rel="icon" type="image/x-icon" href="res/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body style="padding:0; margin: 0; background: #000000;">
-<canvas id="gameCanvas" width="2560" height="1544"></canvas>
-<script src="frameworks/cocos2d-html5/CCBoot.js"></script>
-<script src="main.js"></script>
+<body>
+    <div id="stage-wrap">
+        <div id="stage">
+            <img class="bg" src="res/image_bg.png" alt="">
+            <img class="con-top-bg" src="res/image_conTop_bg.png" alt="">
+
+            <button id="btnHome" class="icon-btn" style="background-image:url(res/btn_home.png)"
+                    data-normal="res/btn_home.png" data-hit="res/btn_home_hit.png"></button>
+            <button id="btnUserMenu" class="icon-btn" style="background-image:url(res/btn_userMN.png)"
+                    data-normal="res/btn_userMN.png" data-hit="res/btn_userMN_hit.png"></button>
+
+            <img class="con-top-level" src="res/image_conTop_level.png" alt="">
+            <div id="levelLabel" class="label">LEVEL 10</div>
+            <div id="levelTitleLabel" class="label">합이 10인 덧,뺄셈</div>
+
+            <img class="con-top-coinbar" src="res/image_conTop_coinbar.png" alt="">
+            <div id="goldCoinLabel" class="label coin-label">00</div>
+            <div id="silverCoinLabel" class="label coin-label">00</div>
+            <div id="copperCoinLabel" class="label coin-label">00</div>
+
+            <div id="userNameLabel" class="label">김재능</div>
+
+            <img class="combo-bg" src="res/image_combo_bg.png" alt="">
+            <img id="comboEffect" class="combo-effect" alt="" hidden>
+
+            <img class="answerboard" src="res/image_answerboard.png" alt="">
+            <div id="answerHint" class="label">지나가는 문제의 답을 입력하세요</div>
+            <img class="answerboard-textbar" src="res/image_answerboard_textbar.png" alt="">
+            <div id="answerLabel" class="label">0</div>
+
+            <img class="levelguage-bg" src="res/image_levelguage_bg.png" alt="">
+            <div id="levelGauge"></div>
+
+            <div id="car">
+                <img class="car-body" src="res/image_car.png" alt="">
+                <div id="expressionLabel" class="label">1 + 1</div>
+                <img id="answerO" src="res/image_o.png" alt="" hidden>
+                <img id="answerX" src="res/image_x.png" alt="" hidden>
+            </div>
+
+            <div id="numPad"></div>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
 </body>
 </html>

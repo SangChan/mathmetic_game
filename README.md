@@ -1,12 +1,21 @@
-#How to play
-##Install cocos2d-js
-1. goto http://www.cocos2d-x.org/download
-2. download cocos2d-js v3.0
-3. this project only for web and only for v3.0 framework
-4. install cocos2d-js on your desktop
-5. add PATH for terminal.
+# 덧셈 자동차 게임
 
-##Play with project
-go to this project path on your terminal.
+지나가는 자동차에 붙은 덧셈식을 보고 숫자 키패드로 정답을 입력하는 웹 게임입니다.
+프레임워크/빌드 도구 없이 순수 HTML/CSS/JS로 동작합니다.
 
-	cocos run -p web
+## 실행 방법
+
+빌드 과정이 없으므로 정적 파일을 서빙하기만 하면 됩니다.
+
+```
+npx serve .
+```
+
+또는 `index.html`을 직접 브라우저로 열어도 됩니다.
+
+## 구조
+
+- `index.html` — 화면 레이아웃(배경, HUD, 키패드, 자동차)
+- `css/style.css` — 레이아웃 및 스타일. `#stage`는 1280x772 고정 캔버스를 기준으로 하고, 화면 폭에 맞춰 `transform: scale()`로 축소됩니다.
+- `js/game.js` — 게임 로직(자동차 이동, 정답 입력/비교, 레벨 게이지, 콤보)
+- `res/` — 스프라이트 이미지 리소스
